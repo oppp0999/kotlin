@@ -1,0 +1,125 @@
+if 문
+가장 기본적인 형태의 if 문
+
+val job = "Backend Developer"
+
+if (job == "Backend Developer") {
+    println("백엔드 개발자")
+} else if (job == "Frontend Developer") {
+    println("프론트엔드 개발자")
+} else {
+    println("개발자 아님")
+}
+if문은 표현식이다. 따라서 Java에서와는 다르게 동작한다. 대입이 가능하다.
+
+val age : Int = 10
+
+val str = if (age > 10) {
+    "성인"
+} else {
+    "아이"
+}
+자바에서는 str = "성인", str = "아이" 처럼 if문 안에 대입문을 넣어주었어야 할텐데 코틀린에서는 표현식으로 동작하기 때문에 위와 같은 대입식이 가능하다.
+코틀린은 삼항연산자가 없다. 하지만 if else가 표현식처럼 동작하기 때문에 불필요해서 없다.
+
+val num1 = 1
+val num2 = 2
+val result = if (num2 > num1) num2 else num1 // 해당 코드가 삼항연산자처럼 동작한다.
+==================
+
+================for 문
+범위 연산자
+
+for (i in 0 .. 3) {
+    println(i)
+} // 0 1 2 3
+ 
+
+until 연산자 : until 뒤에 오는 숫자는 포함하지 않는다.(미만)
+
+for (i in 0 until 3) {
+    println(i)
+} // 0 1 2
+ 
+
+step 연산자 : 값을 증가시킨다.
+
+for (i in 0 .. 6 step 2) {
+    println(i)
+} // 0 2 4 6
+ 
+
+downTo 연산자 : 값을 감소시킨다.
+
+for (i in 3 downTo 1) {
+    println(i)
+} // 3 2 1
+ 
+
+Array 반복
+
+val numbers = arrayOf(1,2,3)
+for(i in numbers) {
+    println(i)
+} // 1 2 3
+
+
+
+===================while 문
+자바에서의 while문과 동일하다. 조건을 확인한 후 true 면 코드를 실행하고 false 면 코드를 실행하지 않는다.
+
+var x = 5
+while (x > 0) {
+    println(x)
+    x--
+} // 5 4 3 2 1
+
+
+====================when 문
+자바에서 switch case를 활용했을 때와 비슷한 동작을 한다.
+
+val value = 2
+
+val result = when (value) {
+    1 -> "첫번쨰"
+    2 -> "두번쨰"
+    3 -> "세번쨰"
+    4 -> "네번째"
+    else -> "기타"
+}
+println(result) // "두번째"
+ 
+
+만약 아래와 같은 enum 클래스가 있다면!
+
+enum class Developer {
+    BACKEND, FRONTEND
+}
+when(getDeveloper()) {
+    Developer.BACKEND -> println("backend")
+    Developer.FRONTEND -> println("frontend")
+}
+when 절을 활용할 때 else를 생략할 수 있습니다. 왜냐하면 Developer enum 클래스에는 BACKEND, FRONTEND 값만 존재하기 때문에 코틀린 컴파일러가 이에 대해서 추론할 수 있도록 제공합니다.
+
+ 
+
+만약 NATIVE라는 타입을 추가한다면..?
+
+enum class Developer {
+    BACKEND, FRONTEND, NATIVE
+}
+
+when 절에서 컴파일 에러가 발생합니다. NATIVE 케이스를 추가하거나 else를 두라고 합니다.
+
+ 
+
+또한 코틀린에서의 when 절은 여러개의 조건을 콤마(,)로 구분해서 한줄에 정의할 수도 있습니다.
+
+fun main() {
+    when(getNumber()) {
+    	1, 2 -> println("첫번째 혹은 두번째")
+        else -> println("그 외.")
+    }
+}
+
+fun getNumber() = 2

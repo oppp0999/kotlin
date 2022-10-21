@@ -1,0 +1,127 @@
+코틀린도 자바와 마찬가지로 enum 타입의 클래스를 제공한다.
+
+ 
+
+자바와 동일하게 상수 클래스로써의 역할을 한다. 코드를 살펴보자
+
+ 
+
+enum class PaymentStatus {
+    UNPAID, PAID, FAILED, REFUNDED
+}
+자바와는 다르게 enum 키워드 뒤에 class라는 키워드를 붙여주어야 한다.
+
+ 
+
+이제 필드를 추가해보자. 해당 enum의 상수가 어떤 값인지를 나타내는 label 문자열 변수를 추가해보자.
+
+enum class PaymentStatus(val label: String) {
+    UNPAID("미지급"), 
+    PAID("지급완료"), 
+    FAILED("지급실패"), 
+    REFUNDED("환불")
+}
+해당 값을 출력해보자
+
+fun main() {
+    println(PaymentStatus.UNPAID.label) // 미지급
+    println(PaymentStatus.PAID.label) // 지급완료
+    println(PaymentStatus.FAILED.label) // 지급실패
+    println(PaymentStatus.REFUNDED.label) // 환불
+}
+enum 값 마다 동작가능한 함수를 선언해보자.
+
+enum class PaymentStatus(val label: String) {
+    UNPAID("미지급") {
+        override fun isPayable(): Boolean {
+            return true
+        }
+    },
+    PAID("지급완료") {
+        override fun isPayable(): Boolean {
+            return false
+        }
+    },
+    FAILED("지급실패") {
+        override fun isPayable(): Boolean {
+            return false
+        }
+    },
+    REFUNDED("환불") {
+        override fun isPayable(): Boolean {
+            return false
+        }
+    };
+
+    abstract fun isPayable(): Boolean
+}
+위 코드처럼 isPayable이라는 추상메소드를 선언하고 각 enum 타입마다 해당 함수를 구현하도록 처리할 수 있다. 
+
+ 
+
+하지만 보통은 이렇게 처리하지 않고 Payable이라는 함수형 인터페이스를 선언해서 구현한다.
+
+enum class PaymentStatus(val label: String): Payable{
+    UNPAID("미지급") {
+        override fun isPayable(): Boolean = false
+    },
+    PAID("지급완료") {
+        override fun isPayable(): Boolean = false
+    },
+    FAILED("지급실패") {
+        override fun isPayable(): Boolean = false
+    },
+    REFUNDED("환불") {
+        override fun isPayable(): Boolean = false
+    };
+}
+
+interface Payable {
+    fun isPayable(): Boolean
+}
+해당 코드를 사용해보자.
+
+fun main() {
+    println(PaymentStatus.UNPAID.label) // 미지급
+    println(PaymentStatus.PAID.label) // 지급완료
+    println(PaymentStatus.FAILED.label) // 지급실패
+    println(PaymentStatus.REFUNDED.label) // 환불
+
+    if (PaymentStatus.UNPAID.isPayable()) {
+        println("결제 가능 상태")
+    }
+}
+이번엔 코틀린 Enum에서 제공하는 valueOf, values 함수에 대해서 알아보자.
+
+우선 아래의 코드를 보면
+
+ 
+
+fun main() {
+    val paymentStatus = PaymentStatus.valueOf("PAID")
+    println(paymentStatus.label)
+    if (paymentStatus == PaymentStatus.PAID) {
+        println("결제 완료 상태")
+    }
+    for (status in PaymentStatus.values()) {
+        println("[${status.name}](${status.label}) : ${status.ordinal}")
+    }
+}
+/*
+출력결과
+지급완료
+결제 완료 상태
+[UNPAID](미지급) : 0
+[PAID](지급완료) : 1
+[FAILED](지급실패) : 2
+[REFUNDED](환불) : 3
+*/
+valueOf 함수는 String 값을 enum의 상수 value와 같은 값이 있는지를 찾는 함수이다. 맞는 문자열 값이 있다면 해당 enum 의 인스턴스를 리턴한다.
+
+ 
+
+values 함수는 enum에 선언된 모든 상수 인스턴스 List 컬렉션을 반환하여 loop를 돌릴 수 있도록 도와준다.
+
+- name으로 접근하는 것은 UNPAID와 같은 enum string에 접근하는 것이고
+
+- ordinal로 접근하는 것은 선언된 순서를 zero based index 기반으로 접근하는 것이다.(이건 사실 굳이 쓸 일이 없다.)

@@ -1,0 +1,59 @@
+----변수 ----
+var a: Int =1
+val b:Int = 1
+두가지 선언방식은 같은 1의 값을 저장하는 변수 a, b를 선언한 값이지만 a는 변수로써의 변수이고, b는 상수로써의 변수입니다.
+- var는 일반적으로 통용되는 변수선언 키워드이며 언제든 읽기 쓰기가 가능합니다. 
+- val은 선언시 초기화를 해야만 사용이 가능하며 중간에 값을 변경할 수 없습니다.
+
+---Nullable 변수 ----
+또한 코틀린은 기본적으로 변수 선언시에 Null을 허용하지 않습니다. 따라서 그냥 퉁 아래와 같은 코드는 문제의 소지가 될만하다고하여 warning을 띄웁니다.
+var b2:Int
+하지만 b2라는 변수를 사용하지는 않았기 때문에 NullPointerException이 발생할 여지는 없으므로 컴파일 에러를 내지는 않습니다. 하지만 아래와 같은 상황에서는 컴파일 에러 메시지로 초기화하라고 나타냅니다.
+
+var b2:Int
+print(b2) // Variable 'b2' must be initialized
+따라서 코틀린에서는 이와 같은 예외적인 Null 허용을 위하여 Nullable 변수 선언문을 표기할 수 있습니다.
+
+// nullable 변수 -> nullpointerexception 발생 가능
+var b:Int? = null
+하지만 다음과 같은 구문은 NullPointerException을 발생시킬 위험이 있으므로 예외적인 케이스가 아니면 사용을 유의해야합니다.
+
+ 
+
+ =====자료형=====
+정수형
+Byte	8 bits
+Short	16 bits
+Int	32 bits
+Long	64 bits
+
+실수형
+Float	32 bits
+Double	64 bits
+
+var intValue:Int = 1234
+var longValue:Long = 1234L
+var intValueByHex:Int = 0x1af //16진수
+var intValueByBin:Int = 0b10 // 2진수
+
+var doubleValue:Double = 123.5
+var doubleValueWithExp:Double = 123.5e10
+var floatValue:Float = 123.5f
+====
+
+=====문자형, 문자열====
+문자형, 논리형
+// 문자형
+var charValue:Char = 'a'
+// 논리형
+var booleanValue = true
+
+문자열
+// 문자열
+val stringValue = "문자열입니다."
+val multiLineStringValue = """[]"""<- 멀티라인 
+
+println(multiLineStringValue) // 줄바꿈이나 특수문자까지 그대로 문자열로 사용 가능.
+문자열은 자바의 String 객체처럼 문자열 자체가 메모리가 됩니다. 
+
+또한 """문자열""" 표현식을 지원하여 멀티라인 문자열도 줄바꿈이나 특수문자까지 그대로 문자열로 가져올 수 있도록 합니다.

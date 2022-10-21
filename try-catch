@@ -1,0 +1,77 @@
+에러 구조.
+코틀린도 이와 별반 다르지 않다.
+
+Error는 말그대로 프로그램을 더이상 운영할 수 없는 정도의 아주 크리티컬한 에러이고, Exception은 우리가 catch 해야할 Exception의 유형들이다.
+
+ 
+
+그 중에서 CheckedException을 처리하는 방법이 Kotlin과 Java와의 차이가 있다.
+
+class Test {
+    public static void main(String[] args) {
+    	Thread.sleep(1)
+    }
+}
+Java에서 위 코드는 컴파일 에러를 뱉는다. 왜냐하면 sleep 메소드는 checkedException을 전파하는 메소드이고 메인 메소드가 이에 대해서 별도로 처리하지 않았기 때문이다.
+
+ 
+
+fun main() {
+	Thread.sleep(1)
+}
+하지만 Kotlin 언어에서 위 코드는 무사히 컴파일도 통과하고 런타임도 통과하여 1ms의 sleep을 실행한다. 코틀린에서는 CheckedException을 강제로 처리하지 않아도 된다. 필요한 경우에 한하여 try-catch를 해주면 된다.
+
+ 
+
+ 
+
+try-catch-finally 구문
+코틀린도 자바와 마찬가지로 예외처리할 수 있는 try-catch문을 제공한다. 물론 finally 문도 제공한다.
+
+try {
+    throw Exception()
+} catch (e: Exception) {
+    println("에러발생!")
+} finally {
+    println("finally 실행!")
+}
+// 에러발생!
+// finally 실행!
+여기까지는 자바와 크게 다르지 않지만 if문과 동일하게 try-catch 구문은 표현식처럼 동작한다.
+
+ 
+
+ 
+
+표현식처럼 동작하는 try-catch문
+
+val a = try {
+    "123".toInt()
+} catch (e: Exception) {
+    println("예외발생!")
+}
+println(a)
+// 123
+ 
+
+이번에는 메소드에서 예외를 발생시켜 보자.
+
+fun exceptionMethod(message: String) { 
+    throw IllegalArgumentException(message)
+}
+ 
+
+해당 메소드는 호출하자마자 IllegalArgumentException을 던진다. 리턴타입을 보면 Nothing이라는 타입을 리턴하고 있다.
+
+형태는 아무것도 리턴하지 않는 Java에서 void 키워드로 동작하는 메소드 같지만 사실은 Nothing이라는 타입을 리턴한다. 이와 비슷한 리턴타입으로 Unit 타입이 있다. Unit과 Nothing의 차이점은 불확실함이다. 쉽게 이야기하면 해당 코드에서 명시적으로 throw 만 일으키는 유형의 함수에 리턴타입 Nothing이 붙는다. 
+
+ 
+
+그래서 위의 함수는 사실
+
+ 
+
+fun exceptionMethod(message: String): Nothing{ 
+    throw IllegalArgumentException(message)
+}
+이러한 리턴타입이 붙는 함수이다.

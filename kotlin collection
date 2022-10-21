@@ -1,0 +1,208 @@
+1. Collection Types
+코틀린은 자체적으로 기본 컬렉션 타입인 List, Set, Map을 제공하고 있습니다.
+
+코틀린은 두가지 성격의 컬렉션을 제공합니다. 
+
+ - 가변 컬렉션(mutable) : 자바의 컬렉션처럼 가변적으로 삽입, 수정, 삭제 작업이 가능한 컬렉션
+
+ - 불변 컬렉션(immutable) : 자바의 unmodifiableList 처럼 해당 컬렉션의 인스턴스 뿐만아니라 내부 값까지도 불변하도록 처리하는 컬렉션 타입
+
+
+kotlin collection architecture
+ 
+
+ 
+
+2. 컬렉션 생성하기.
+Immutable List
+val roomTypeList = listOf("원룸", "투룸", "아파트", "오피스텔")
+- 해당 list의 참조를 확인해보았을 때, 추가, 수정, 삭제 함수가 없다. -> 컬렉션 내부를 변경할 수 없음.
+
+ 
+
+Mutable List
+val mutableRoomTypeList = mutableListOf<String>()
+mutableRoomTypeList.add("원룸")
+mutableRoomTypeList.add("투룸")
+mutableRoomTypeList.add("아파트")
+mutableRoomTypeList.add("오피스텔")
+- 이런식으로 직접 add 메소드로 추가하는 방식이 있다.
+
+- 이 방법보다는 아래의 방법을 많이 추천!
+
+val mutableRoomTypeList = mutableListOf<String>().apply {
+    add("원룸")
+    add("투룸")
+    add("아파트")
+    add("오피스텔")
+}
+- apply 함수를 사용하면 불필요한 참조 호출 부분은 코드에서 사라진다.
+
+ 
+
+Immutable Set
+val numberSet = setOf(1,2,3,4)
+Mutable Set (apply 함수 활용)
+mutableSetOf<Int>().apply { 
+    add(1)
+    add(2)
+    add(3)
+    add(4)
+}
+ 
+
+Immutable Map
+var numberMap = mapOf("one" to 1, "two" to 2)
+- 이런식으로 key와 value를 직접 to 키워드를 사용하여 지정해줄 수 있다.(to 키워드를 중위 함수라고 한다.)
+
+ 
+
+Mutable Map
+val mutableNumberMap = mutableMapOf<String, Int>()
+mutableNumberMap["one"] = 1 // 선호
+mutableNumberMap.put("two", 2)
+- 위처럼 두가지의 표현이 가능한데, 두번째는 Java와의 형태적 유사함을 가져갔지만 코틀린에서는 첫번째 표현을 선호한다. 가독성이 더 좋다.
+
+ 
+
+컬렉션 빌더를 통한 생성.
+- buildList, buildSet, buildMap 3가지 종류의 컬렉션 빌더를 제공한다.
+
+- 해당 함수의 내부에서는 가변(mutable)으로 동작하고 결과로써 return된 이후로는 불변(immutable)으로 동작한다.
+
+val buildList: List<String> = buildList {
+    // 이 안에서는 마음껏 넣을 수있지만 한번 리턴되면 immutable 하게 변경된다.
+    add("원룸")
+    add("투룸")
+    add("쓰리룸")
+}
+ 
+
+- 특정 구현체를 사용하기 위해서는 직접 구현해주면 된다.
+
+// linkedList
+val linkedList = LinkedList<String>().apply {
+    addFirst("원룸") // 이렇게 컬렉션 고유의 함수도 사용가능하다.
+    add("투룸")
+    addLast("쓰리룸")
+}
+// arrayList
+val arrayList = ArrayList<String>().apply {
+    add("원룸")
+    add("투룸")
+    add("쓰리룸")
+}
+ 
+
+ 
+
+3. 컬렉션 반복하기
+- Java의 java.util.Collection 인터페이스처럼 Kotlin의 Collection 인터페이스 또한 Iterable 인터페이스를 상속하고 있다.
+
+- 따라서 Iterator 반복자를 이용한 루핑이 가능하다.
+
+Iterator 반복
+val roomTypeList = listOf("원룸", "투룸", "아파트", "오피스텔")
+val iterator = roomTypeList.iterator()
+while(iterator.hasNext()) {
+    println(iterator.next())
+}
+// 원룸
+// 투룸
+// 아파트
+// 오피스텔
+foreach문을 통한 반복
+for (roomType in roomTypeList) {
+    println(roomType)
+}
+- 자바와 크게 다르지 않다.
+
+ 
+
+forEach{ } 함수를 통한 반복
+roomTypeList.forEach {
+    println(it)
+}
+- it이란 키워드는 코틀린에서 forEach { } 함수 내에서 루핑 컬렉션의 요소를 지칭하는 키워드이다. (forEach{ } 같은 함수를 인라인 함수라고 부른다.)
+
+- 이러한 인라인함수를 이용해 많은 코드가 절약된다.
+
+ 
+
+foreach문으로 변환하기
+
+val lowerList = listOf("a", "b", "c")
+val upperList = mutableListOf<String>()
+for (word in lowerList) {
+    upperList.add(word.uppercase())
+}
+map { } 인라인 함수로 변환하기
+
+val lowerList = listOf("a", "b", "c")
+lowerList.map { it.uppercase() }
+- code가 간단해서 많이 차이나진 않지만 행위 자체가 1개의 로우로 처리할 수 있어서 좋아보인다.
+
+ 
+
+좀더 복잡한 코드로 보자.
+
+val filteredList = mutableListOf<String>()
+for (upperCase in upperList) {
+	if (upperCase == "A" || upperCase == "C") {
+	  filteredList.add(upperCase)
+	}
+}
+println(filteredList)
+// 출력결과 : [A, C]
+val filteredList = upperList.filter { it == "A" || it == "C" }
+println(filteredList)
+// [A, C]
+- "A" 이거나 "C"일때만 가져오겠다는 것이 직관적이다.
+
+ 
+
+그런데!!
+
+ 
+
+이러한 코틀린 인라인 함수를 Java를 써봤던 사람이라면 조금 익숙할지 모르겠다. 더 자세히 말하면 JDK 1.8 이상 버전을 써보신 분 그리고 stream을 많이 활용해보신 분들이라면 크게 다르게 느껴지지 않을 것 같은 문법이다.
+
+ 
+
+하지만 java stream과의 차이는 있다.
+
+ 
+
+stream의 경우 filter, map, flatMap 등의 메소드는 체이닝을 통해 해당 연산을 지연한다. 따라서 collect() 같은 최종 연산자를 호출해주지 않으면 이전 연산들이 실행되지 않게 된다.
+
+ 
+
+코틀린의 인라인 함수는 매번 최종 연산을 진행하기 때문에 연산 지연이 일어나지는 않지만 계속 collection을 생산해내게 된다. 그래서 코틀린에서는 filter, map 같은 함수를 사용할 때 체이닝을 통해서 진행하게 된다면 매번 새로운 collection 인스턴스를 생성해내기 때문에 heap에 메모리가 계속 쌓이게 될것이다.
+
+ 
+
+val filteredList = upperList
+    .filter { it == "A" || it == "C" }
+    .map {it.uppercase()}
+따라서 코틀린에서 위의 코드는 (upperList 1개), (filter된 upperList 1개), (uppercase가 적용된 upperList 1개 = filteredList) 이런 식으로 heap에 메모리가 쌓이게 된다. -> 결국 불필요한 메모리가 낭비되게 된다는 것이다.
+
+ 
+
+그럼 코틀린에서는 이런 stream 처럼 Lazy 하게 동작시킬 수는 없을까?
+
+(잠시 설명하자면 코틀린 collection에서 .stream()으로 호출하는 것은 엄연히 Java 클래스의 Stream이다. 따라서 코틀린 자체에서 동작한다고 보기는 어렵다.)
+
+ 
+
+val filteredList = upperList
+        .asSequence()
+        .filter { it == "A" || it == "C" }
+        .toList()
+
+println(filteredList)
+// [A, C]
+- 이런식으로 asSequance() 함수를 컬렉션 초입에 선언해준다.
+
+- 내부적으로 각각의 함수가 실행할 때, 시퀀스를 생성하고 최종 연산자를 호출할 때 1개의 컬렉션 인스턴스를 생성해준다.
+
+- 일반적인 단건 호출에 대해서는 인라인 함수가 빠르고 가독성도 좋아 간편하지만 대량의 컬렉션을 다루게 된다면 시퀀스 api를 사용하는게 타당해 보인다.

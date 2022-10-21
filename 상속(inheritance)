@@ -1,0 +1,67 @@
+코틀린의 class 타입은 기본적으로 final 입니다. 
+
+ 
+
+final 키워드가 클래스에 붙게 되는 경우 해당 클래스는 상속을 이어갈 수 없는 클래스가 됩니다. 
+
+ 
+
+자바에서는 모든 클래스가 상속이 가능하며 final 키워드를 활용하여 추후 상속가능성을 닫는 구조였습니다. 하지만 kotlin은 class가 상속을 허용해주는 방향으로 발전해나갔으며 해당 키워드는 open 입니다. 
+
+open class Dog { // 상속이 가능한 상태의 클래스
+    open var age: Int = 0
+    open fun bark() {
+        println("멍멍")
+    }
+}
+Dog 클래스의 필드, 함수들 또한 클래스와 마찬가지로 open 키워드를 통해 오버라이딩을 허용해주어야 합니다.
+
+ 
+
+해당 Dog 클래스를 상속하는 ChildDog 클래스를 만들어보겠습니다.
+
+open class ChildDog(final override var age: Int = 0): Dog() {
+
+    final override fun bark() {
+        println("컹컹")
+    }
+}
+ 
+
+ 
+
+이제 ChildDog을 상속하는 DescendatDog을 만들어보겠습니다.
+
+class DescendatDog: ChildDog() {
+
+}
+해당 클래스는 ChildDog의 필드와 함수를 오버라이딩 할 수 없기 때문에 빈 몸통만 남았습니다. 왜냐하면 ChildDog 클래스의 필드와 함수가 모두 final 키워드로 정의되어 있기 때문입니다.(직접 명시된 final은 오버라이딩이 안된다는 점은 자바와 동일합니다.)
+
+ 
+
+ 
+
+추상클래스
+이제는 추상클래스를 살펴보겠습니다. 
+
+ 
+
+먼저 개발자라는 뜻의 Developer라는 추상 클래스를 정의해보고 age라는 필드와 code라는 함수를 정의해보겠습니다.
+
+abstract class Developer {
+    abstract var age: Int
+    abstract fun code(language: String)
+}
+ 
+
+이제 해당 클래스를 구현하는 BackendDeveloper라는 구현 클래스를 정의해보겠습니다.
+
+class BackendDeveloper(override var age: Int = 0): Developer() {
+
+    override fun code(language: String) {
+        println("I write code with $language")
+    }
+}
+추상클래스도 일반 클래스를 상속하듯이 동일한 내용이 적용됩니다. 그리고 abstract 키워드 또한 자바와 동일합니다. 
+
+ 
