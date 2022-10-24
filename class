@@ -1,0 +1,128 @@
+클래스 (Class)
+일단 클래스를 알기 전에 코틀린 파일의 특징부터 알아야 합니다. 코틀린 파일은 xxx.kt 형태로 작성하며 안쪽 구조는 java와는 다소 큰 차이가 있습니다.
+
+ 
+
+우선 메소드가 kt 파일 내에 클래스의 존재와 관련없이 존재할 수 있습니다.
+
+// 일반 클래스
+class Test(val test: Int) {
+
+}
+
+// 클래스와 떨어진 함수.
+fun test() {
+	println("test")
+}
+위의 일반 클래스에서 (val test: Int) 표현은 생략된 생성자 표현입니다. 생성자는 constructor 키워드로 아래와 같이 표현할 수도 있습니다. 하지만 표현상 constructor를 제외한 표현이 더욱 간소화되기도 하고 가독성도 좋기 때문에 대체로 생략하는 편입니다.
+
+class Test constructor(val test: Int) {
+    
+}
+ 
+
+ 
+
+1) 클래스는 본문이 없이 존재할 수 있습니다.(Empty Class)
+
+// 일반 클래스
+class Test(val test: Int) {
+
+}
+
+// 클래스와 떨어진 함수.
+fun test() {
+	println("test")
+}
+
+// 본문이 없는 Empty Class
+class EmptyClass
+ 
+
+2) 클래스의 생성자는 후행쉼표를 제공합니다. 따라서 이에 대한 이점을 많이 제공합니다.
+
+// 클래스 생성자 후행쉼표 제공
+class Test(val test: Int,
+           val test2: Int,
+           ) {
+
+}
+이런 코딩스타일의 경우 생성자의 인자가 늘어날 경우에 대한 대비가 되어있다고 표현할 수 있고, Github를 통해 코드리뷰를 진행할 경우 변경 사항에 대해서 불필요한 콤파에 의한 변경사항 감지를 느낄 필요가 없습니다.
+
+ 
+
+3) 클래스는 생성자에 default 값을 설정할 수 있습니다.
+
+class Coffee (
+    var name: String = "", // 기본값
+    var price: Int = 0,
+    var iced: Boolean = false,
+)
+ 
+
+4) 클래스는 기본적으로 getter/setter가 내장되어 있으며 이를 직접 구현할수도 있습니다.
+
+class Coffee (
+    var name: String = "", // 기본값
+    var price: Int = 0,
+    var iced: Boolean = false,
+){
+
+    // custom getter
+    val brand: String
+        get() {
+            return "내가 만든 브랜드."
+        }
+
+    var quantity: Int = 0
+        set(value) {
+            if (value > 0) {
+                // field 식별자. -> quantity를 호출하게 되면 stackoverflow 터진다.
+                field = value
+            }
+        }
+}
+여기서 setter 부분에서 field라는 키워드가 있는데요. 해당 키워드는 quantity 자체의 프로퍼티를 지칭하는 대명사 키워드로 여기서 직접 quantity를 호출하게 되는경우(quantity = value) 또한번 setter가 호출되어 호출스택의 setter 재귀가 무한대로 늘어나 stackoverflow가 발생하게 됩니다. 이에 주의해야합니다. 
+
+ 
+
+setter에서는 해당 필드에 대입 및 접근하기 위해서는 field라는 제공된 키워드를 사용해야 합니다.
+ 
+
+클래스의 인스턴스에서 필드를 호출할 때는 getter setter 기반으로 호출됩니다. 위에서 사용된 클래스를 살짝 수정해보겠습니다.
+
+class Coffee (
+    var name: String = "", // 기본값
+    var price: Int = 0,
+    var iced: Boolean = false,
+){
+
+    // custom getter
+    val brand: String
+        get() {
+            println("getter가 사용됨.")
+            return "내가 만든 브랜드."
+        }
+
+    var quantity: Int = 0
+        set(value) {
+            if (value > 0) {
+                println("setter가 사용됨.")
+                // field 식별자. -> quantity를 호출하게 되면 stackoverflow 터진다.
+                field = value
+            }
+        }
+}
+
+fun main() {
+    val coffee = Coffee()
+    coffee.quantity = 1
+
+    println("수량은 ${coffee.quantity} 브랜드는 ${coffee.brand}") // getter
+}
+// setter가 사용됨.
+// getter가 사용됨.
+// 수량은 1 브랜드는 스타벅스
+quantity 변수에 직접 값을 할당할때, coffee.brande를 출력할 때 getter와 setter가 사용되는 것을 볼 수 있습니다. 
+
+ 
